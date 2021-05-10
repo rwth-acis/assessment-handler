@@ -3,22 +3,59 @@ import './App.css';
 import Button from '@material-ui/core/Button'
 //import './callbacks/openidconnect-popup-signin-callback.js'
 import 'openidconnect-signin/openidconnect-signin.js'
+import Assessments, { } from "./pages/assessment/Assessments"
+import SideMenu from './components/SideMenu'
+import { ThemeProvider, CssBaseline, createMuiTheme, makeStyles } from '@material-ui/core';
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#333996",
+      light: '#3c44b126'
+    },
+    secondary: {
+      main: "#f83245",
+      light: '#f8324526'
+    },
+    background: {
+      default: "#f4f5fd"
+    },
+  },
+  overrides:{
+    MuiAppBar:{
+      root:{
+        transform:'translateZ(0)'
+      }
+    }
+  },
+  props:{
+    MuiIconButton:{
+      disableRipple:true
+    }
+  }
+})
+
+
+const useStyles = makeStyles({
+  appMain: {
+    paddingLeft: '320px',
+    width: '100%'
+  }
+})
 
 function App() {
+  const classes = useStyles();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <openidconnect-signin id="signin_popup"
-                        scope="openid profile"
-                        clientid="a4b3f15a-eaec-489a-af08-1dc9cf57347e"
-                        authority="https://api.learning-layers.eu/o/oauth2"
-                        providername="Layers"
-                        popupredirecturi="popup-signin-callback.html"
-                        popuppostlogoutredirecturi="popup-signout-callback.html"
-                        silentredirecturi="silent-callback.html"></openidconnect-signin>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <SideMenu />
+      <div className={classes.appMain}>
+        <header />
+        <Assessments />
+
+      </div>
+      <CssBaseline/>
+    </ThemeProvider>
+    
   );
 }
 

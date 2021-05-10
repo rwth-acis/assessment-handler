@@ -4,10 +4,12 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
     "@polymer/iron-demo-helpers": "^3.1.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
+    "formik": "^2.2.6",
     "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar",
     "lit-element": "^2.5.1",
     "openidconnect-signin": "github:rwth-acis/openidconnect-signin",
@@ -15,7 +17,8 @@
     "react-dom": "^17.0.2",
     "react-openidconnect": "^1.1.1",
     "react-scripts": "4.0.3",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "yup": "^0.32.9"
   },
   "scripts": {
     "start": "react-scripts start",

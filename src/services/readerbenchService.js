@@ -1,0 +1,3 @@
+export function insertAssessment(data){
+    
+}
