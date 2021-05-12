@@ -1,0 +1,44 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: assessment-handler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assessment-handler
+  template:
+    metadata:
+      labels:
+        app: assessment-handler
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - detel-slave1
+      containers:
+        - name: assessment-handler
+          image: karlydiamond214/assessment_handler:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+      restartPolicy: Always
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: assessment-handler
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      nodePort: 31000
+  selector:
+    app: assessment-handler

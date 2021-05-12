@@ -6,12 +6,14 @@ import { Divider, Button, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import * as readerbenchService from "../../services/readerbenchService";
+import Alert from '@material-ui/lab/Alert';
 
 const validationSchema = Yup.object().shape({
     topicName: Yup.string().required("Frage ist erforderlich"),
     question: Yup.array().of(
       Yup.object().shape({
         question: Yup.string().required("Frage ist erforderlich"),
+        questionWeights: Yup.string().required("Gewicht ist erforderlich"),
         textref: Yup.string().required("Text refenrenz ist erforderlich")
       })
     )
@@ -35,7 +37,19 @@ const useStyles = makeStyles(theme => ({
 const onSubmit = async (values, {setSubmitting, setErrors, setStatus, resetForm}) => {
     try {
         console.log("onSubmit", JSON.stringify(values, null, 2));
-        readerbenchService.insertAssessment(values)
+        fetch('http://137.226.232.187:32445/readerbench/insertAssessment', {
+        method: 'POST',
+        // We convert the React state to JSON and send it as the POST body
+        body: JSON.stringify(values, null, 2)
+      }).then(function(response) {
+        console.log(response)
+        if(response.ok){
+            resetForm();
+            <Alert severity="success">Insert was a success!</Alert>
+        }
+        return response.json();
+      });
+        //readerbenchService.insertAssessment(values)
         setStatus({success: true})
     } catch (error) {
       setStatus({success: false})
@@ -57,6 +71,7 @@ export default function AssessmentForm(){
                 {
                 sequence: Math.random(),
                 question: "",
+                questionWeights: "",
                 textref: ""
                 }
             ]
@@ -71,6 +86,7 @@ export default function AssessmentForm(){
                             variant="outlined"
                             label = "Übungsname"
                             margin="normal"
+                            name="topicName"
                             required
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -84,6 +100,10 @@ export default function AssessmentForm(){
                                         const touchedQuestion = getIn(touched, question);
                                         const errorQuestion = getIn(errors, question);
 
+                                        const questionWeights = `question[${index}].questionWeights`;
+                                        const touchedquestionWeights = getIn(touched, questionWeights);
+                                        const errorquestionWeights = getIn(errors, questionWeights);
+                                        
                                         const textref = `question[${index}].textref`;
                                         const touchedTextref = getIn(touched, textref);
                                         const errorTextref = getIn(errors, textref);
@@ -106,6 +126,24 @@ export default function AssessmentForm(){
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 />
+                                                <TextField 
+                                                className={classes.field}
+                                                margin="normal"
+                                                variant="outlined"
+                                                label="Gewicht"
+                                                name={questionWeights}
+                                                value={p.questionWeights}
+                                                required
+                                                helperText={
+                                                    touchedquestionWeights && errorquestionWeights
+                                                    ? errorquestionWeights
+                                                    : ""
+                                                }
+                                                error={Boolean(touchedquestionWeights && errorquestionWeights)}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                />
+
                                                 <Box width={1000}>
                                                 <TextField
                                                 className={classes.field}
@@ -124,6 +162,7 @@ export default function AssessmentForm(){
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 multiline
+                                                rows="3"
                                                 fullWidth 
                                                 />
                                                 </Box>
@@ -147,10 +186,10 @@ export default function AssessmentForm(){
                                         type="button"
                                         variant="outlined"
                                         onClick={() =>
-                                            arrayHelpers.push({ sequence: Math.random(), question: "", textref: "" })
+                                            arrayHelpers.push({ sequence: Math.random(), question: "", questionWeights:"", textref: "" })
                                         }
                                     >
-                                        Neue Hinzufügen
+                                        Neue Frage hinzufügen
                                     </Button>
                                 </div>
                             )}

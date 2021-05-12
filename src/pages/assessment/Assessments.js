@@ -15,7 +15,7 @@ export default function Assessments(){
     return(
         <>
             <PageHeader 
-                title="New Assessment"
+                title="Neue Übung"
                 subtitle="Form with validation"
                 icon={<PostAddIcon fontSize="large"/>}
             />
