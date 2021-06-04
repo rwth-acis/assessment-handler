@@ -7,13 +7,22 @@ import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import * as readerbenchService from "../../services/readerbenchService";
 import Alert from '@material-ui/lab/Alert';
+import DateFnsUtils from '@date-io/date-fns';
+import 'date-fns';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardTimePicker,
+    KeyboardDatePicker,
+  } from '@material-ui/pickers';
+import { Message } from "semantic-ui-react";
 
 const validationSchema = Yup.object().shape({
     topicName: Yup.string().required("Frage ist erforderlich"),
+    due_date: Yup.string().required("Deadline ist erforderlich"),
     question: Yup.array().of(
       Yup.object().shape({
         question: Yup.string().required("Frage ist erforderlich"),
-        questionWeights: Yup.string().required("Gewicht ist erforderlich"),
+        numberOfPoints: Yup.string().required("Gewicht ist erforderlich"),
         textref: Yup.string().required("Text refenrenz ist erforderlich")
       })
     )
@@ -37,15 +46,17 @@ const useStyles = makeStyles(theme => ({
 const onSubmit = async (values, {setSubmitting, setErrors, setStatus, resetForm}) => {
     try {
         console.log("onSubmit", JSON.stringify(values, null, 2));
-        fetch('http://137.226.232.187:32445/readerbench/insertAssessment', {
+        fetch('http://137.226.232.75:32445/readerbench/insertAssessment', {
         method: 'POST',
         // We convert the React state to JSON and send it as the POST body
         body: JSON.stringify(values, null, 2)
       }).then(function(response) {
         console.log(response)
         if(response.ok){
-            resetForm();
-            <Alert severity="success">Insert was a success!</Alert>
+            alert("Assessment  erfolgreich gesendet");
+        }
+        else{
+            alert("Fehler beim sendung der Assessment");
         }
         return response.json();
       });
@@ -58,20 +69,28 @@ const onSubmit = async (values, {setSubmitting, setErrors, setStatus, resetForm}
     }
   }
 
-export default function AssessmentForm(){
+export default function AssessmentForm(props){
+    const { addOrEdit, recordForEdit } = props
     const classes = useStyles();
+    const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+    };
+
 
     return(
     
-    <div className={classes.container}>
         <Formik
             initialValues={{
             topicName: "",
+            due_date:new Date('2014-08-18T21:11:54'),
+            description:"",
             question: [
                 {
                 sequence: Math.random(),
                 question: "",
-                questionWeights: "",
+                numberOfPoints: "",
                 textref: ""
                 }
             ]
@@ -91,6 +110,29 @@ export default function AssessmentForm(){
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <KeyboardDatePicker
+                            margin="normal"
+                            id="date-picker-dialog"
+                            label="Abgabe Datum"
+                            format="MM/dd/yyyy"
+                            value={selectedDate}
+                            name="due_date"
+                            KeyboardButtonProps={{
+                                "aria-label": "change date"
+                            }}
+                            />
+                        </MuiPickersUtilsProvider>
+                        <TextField 
+                            className={classes.field}
+                            variant="outlined"
+                            label = "Beschreibung"
+                            margin="normal"
+                            name="description"
+                            required
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
                         <Divider style={{ marginTop: 20, marginBottom: 20 }} />
                         <FieldArray name="question">
                             {arrayHelpers  => (
@@ -100,9 +142,9 @@ export default function AssessmentForm(){
                                         const touchedQuestion = getIn(touched, question);
                                         const errorQuestion = getIn(errors, question);
 
-                                        const questionWeights = `question[${index}].questionWeights`;
-                                        const touchedquestionWeights = getIn(touched, questionWeights);
-                                        const errorquestionWeights = getIn(errors, questionWeights);
+                                        const numberOfPoints = `question[${index}].numberOfPoints`;
+                                        const touchednumberOfPoints = getIn(touched, numberOfPoints);
+                                        const errornumberOfPoints = getIn(errors, numberOfPoints);
                                         
                                         const textref = `question[${index}].textref`;
                                         const touchedTextref = getIn(touched, textref);
@@ -130,16 +172,16 @@ export default function AssessmentForm(){
                                                 className={classes.field}
                                                 margin="normal"
                                                 variant="outlined"
-                                                label="Gewicht"
-                                                name={questionWeights}
-                                                value={p.questionWeights}
+                                                label="punkte"
+                                                name={numberOfPoints}
+                                                value={p.numberOfPoints}
                                                 required
                                                 helperText={
-                                                    touchedquestionWeights && errorquestionWeights
-                                                    ? errorquestionWeights
+                                                    touchednumberOfPoints && errornumberOfPoints
+                                                    ? errornumberOfPoints
                                                     : ""
                                                 }
-                                                error={Boolean(touchedquestionWeights && errorquestionWeights)}
+                                                error={Boolean(touchednumberOfPoints && errornumberOfPoints)}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 />
@@ -149,7 +191,7 @@ export default function AssessmentForm(){
                                                 className={classes.field}
                                                 margin="normal"
                                                 variant="outlined"
-                                                label="textref"
+                                                label="Textreferenz"
                                                 name={textref}
                                                 value={p.textref}
                                                 required
@@ -186,7 +228,7 @@ export default function AssessmentForm(){
                                         type="button"
                                         variant="outlined"
                                         onClick={() =>
-                                            arrayHelpers.push({ sequence: Math.random(), question: "", questionWeights:"", textref: "" })
+                                            arrayHelpers.push({ sequence: Math.random(), question: "", numberOfPoints:"", textref: "" })
                                         }
                                     >
                                         Neue Frage hinzufügen
@@ -219,11 +261,9 @@ export default function AssessmentForm(){
                                 </pre>
                             </>
                         )}
-                
                     </Form>
                 )}
             </Formik>
-        </div>
     );
     
 }

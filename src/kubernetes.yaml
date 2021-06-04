@@ -20,7 +20,7 @@ spec:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                - detel-slave1
+                - detel
       containers:
         - name: assessment-handler
           image: karlydiamond214/assessment_handler:dev
