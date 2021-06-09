@@ -5,24 +5,13 @@ import * as Yup from "yup";
 import { Divider, Button, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
-import * as readerbenchService from "../../services/readerbenchService";
-import Alert from '@material-ui/lab/Alert';
-import DateFnsUtils from '@date-io/date-fns';
-import 'date-fns';
-import {
-    MuiPickersUtilsProvider,
-    KeyboardTimePicker,
-    KeyboardDatePicker,
-  } from '@material-ui/pickers';
-import { Message } from "semantic-ui-react";
+
 
 const validationSchema = Yup.object().shape({
     topicName: Yup.string().required("Frage ist erforderlich"),
-    due_date: Yup.string().required("Deadline ist erforderlich"),
     question: Yup.array().of(
       Yup.object().shape({
         question: Yup.string().required("Frage ist erforderlich"),
-        numberOfPoints: Yup.string().required("Gewicht ist erforderlich"),
         textref: Yup.string().required("Text refenrenz ist erforderlich")
       })
     )
@@ -84,13 +73,11 @@ export default function AssessmentForm(props){
         <Formik
             initialValues={{
             topicName: "",
-            due_date:new Date('2014-08-18T21:11:54'),
             description:"",
             question: [
                 {
                 sequence: Math.random(),
                 question: "",
-                numberOfPoints: "",
                 textref: ""
                 }
             ]
@@ -107,29 +94,7 @@ export default function AssessmentForm(props){
                             margin="normal"
                             name="topicName"
                             required
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                        />
-                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <KeyboardDatePicker
-                            margin="normal"
-                            id="date-picker-dialog"
-                            label="Abgabe Datum"
-                            format="MM/dd/yyyy"
-                            value={selectedDate}
-                            name="due_date"
-                            KeyboardButtonProps={{
-                                "aria-label": "change date"
-                            }}
-                            />
-                        </MuiPickersUtilsProvider>
-                        <TextField 
-                            className={classes.field}
-                            variant="outlined"
-                            label = "Beschreibung"
-                            margin="normal"
-                            name="description"
-                            required
+                            fullWidth 
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
@@ -142,10 +107,6 @@ export default function AssessmentForm(props){
                                         const touchedQuestion = getIn(touched, question);
                                         const errorQuestion = getIn(errors, question);
 
-                                        const numberOfPoints = `question[${index}].numberOfPoints`;
-                                        const touchednumberOfPoints = getIn(touched, numberOfPoints);
-                                        const errornumberOfPoints = getIn(errors, numberOfPoints);
-                                        
                                         const textref = `question[${index}].textref`;
                                         const touchedTextref = getIn(touched, textref);
                                         const errorTextref = getIn(errors, textref);
@@ -159,6 +120,7 @@ export default function AssessmentForm(props){
                                                 name={question}
                                                 value={p.question}
                                                 required
+                                                fullWidth 
                                                 helperText={
                                                     touchedQuestion && errorQuestion
                                                     ? errorQuestion
@@ -168,25 +130,7 @@ export default function AssessmentForm(props){
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 />
-                                                <TextField 
-                                                className={classes.field}
-                                                margin="normal"
-                                                variant="outlined"
-                                                label="punkte"
-                                                name={numberOfPoints}
-                                                value={p.numberOfPoints}
-                                                required
-                                                helperText={
-                                                    touchednumberOfPoints && errornumberOfPoints
-                                                    ? errornumberOfPoints
-                                                    : ""
-                                                }
-                                                error={Boolean(touchednumberOfPoints && errornumberOfPoints)}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                />
-
-                                                <Box width={1000}>
+                                                
                                                 <TextField
                                                 className={classes.field}
                                                 margin="normal"
@@ -207,7 +151,6 @@ export default function AssessmentForm(props){
                                                 rows="3"
                                                 fullWidth 
                                                 />
-                                                </Box>
                                                 
                                                 
                                                 <Button
@@ -228,7 +171,7 @@ export default function AssessmentForm(props){
                                         type="button"
                                         variant="outlined"
                                         onClick={() =>
-                                            arrayHelpers.push({ sequence: Math.random(), question: "", numberOfPoints:"", textref: "" })
+                                            arrayHelpers.push({ sequence: Math.random(), question: "", textref: "" })
                                         }
                                     >
                                         Neue Frage hinzufügen

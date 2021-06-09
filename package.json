@@ -13,16 +13,19 @@
     "formik": "^2.2.6",
     "las2peer-frontend-statusbar": "github:rwth-acis/las2peer-frontend-statusbar",
     "lit-element": "^2.5.1",
+    "oidc-react": "^1.5.1",
     "openidconnect-signin": "github:rwth-acis/openidconnect-signin",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-openidconnect": "^1.1.1",
     "react-scripts": "4.0.3",
+    "react-toastify": "^7.0.4",
+    "typescript": "^4.3.2",
     "web-vitals": "^1.1.2",
     "yup": "^0.32.9"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set PORT=4200 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
