@@ -120,6 +120,8 @@ export default function AssessmentForm(props){
                                                 name={question}
                                                 value={p.question}
                                                 required
+                                                multiline
+                                                rows="2"
                                                 fullWidth 
                                                 helperText={
                                                     touchedQuestion && errorQuestion
@@ -148,7 +150,7 @@ export default function AssessmentForm(props){
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 multiline
-                                                rows="3"
+                                                rows="4"
                                                 fullWidth 
                                                 />
                                                 
