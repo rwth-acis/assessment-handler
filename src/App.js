@@ -4,6 +4,7 @@ import './App.css';
 import Button from '@material-ui/core/Button'
 //import './callbacks/openidconnect-popup-signin-callback.js'
 import Assessments, { } from "./pages/assessment/Assessments"
+import Report, { } from "./pages/report/Report"
 import SideMenu from './components/SideMenu'
 import { ThemeProvider, CssBaseline, createMuiTheme, makeStyles,Paper } from '@material-ui/core';
 import { AuthProvider } from 'oidc-react';
@@ -13,6 +14,13 @@ import { Log, User, UserManager } from 'oidc-client';
 import { ToastContainer, toast } from 'react-toastify';
 import { AuthService } from './services/AuthService';
 import Box from '@material-ui/core/Box';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useLocation
+} from "react-router-dom";
 
 var auth = new AuthService();
 const theme = createMuiTheme({
@@ -106,20 +114,66 @@ function App() {
     </Box>;
     }
     return (
-          
       <ThemeProvider theme={theme}>
-        <SideMenu />
-        <div className={classes.appMain}>
-          <header />
-          
-          {vue}
+      <SideMenu />
+      <div className={classes.appMain}>
+        <header />
+        <Router>
+          <div>
+          {/* A <Switch> looks through its children <Route>s and
+              renders the first one that matches the current URL. */}
+            <Switch>
+              <Route path="/report">
+                <ReportF />
+              </Route>
+              <Route path="/">
+              {vue}
+              </Route>
+            </Switch>
+          </div>
+        </Router>;
 
-        </div>
-        <CssBaseline/>
-      </ThemeProvider>
+        
+        
+
+      </div>
+      <CssBaseline/>
+    </ThemeProvider>
+
+      
   );
   
     
+}
+function Home() {
+  return (
+          
+    <Assessments />
+  );
+}
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+function ReportF() {
+  let query = useQuery();
+  return (<Report name={query.get("topic")} />);
+}
+
+function Child({ name }) {
+  return (
+    <div>
+      {name ? (
+        <div>
+          The <code>name</code> in the query string is &quot;{name}
+          &quot;
+        </div>
+      ) : (
+        <h3>There is no name in the query string</h3>
+      )}
+    </div>
+  );
 }
 
 
