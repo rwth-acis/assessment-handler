@@ -1,101 +1,85 @@
 import React, { useState, useEffect } from 'react';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import PageHeader from '../../components/PageHeader';
-import { Paper,makeStyles, CardHeader, Card, CardContent  } from '@material-ui/core';
+import { makeStyles} from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+
+import Question from './Question'
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
         margin: theme.spacing(5),
         padding: theme.spacing(3)
-    }
+    },
+    root: {
+        '& > *': {
+          borderBottom: 'unset',
+        },
+      }
 }))
-export default function Assessments({ name }){
-    const classes = useStyles();
-    const [data, setData] = useState(null);
+
+
+  
+export default function Report({ name }){
+    const [data, setData] = useState({});
+    const [isLoaded, setIsLoaded] = useState(false);
+    
     // Similar to componentDidMount and componentDidUpdate:
     useEffect(() => {
       // Update the document title using the browser API
-        try {
             fetch('http://137.226.232.75:32445/readerbench/getReportJson/'+ name, {
             method: 'POST',
-          }).then(function(response) {
-            console.log(response)
-            if(response.ok){
-                
-            }
-            else{
-                alert("Fehler bei der Ermittlung der Ergebnisse");
-            }
-            return response.json();
-          });
-        } catch (error) {
-            console.error(error);
-        }
-  
-    });
-    return(
+          }).then(res => res.json()).then((result) =>{
+            console.log(result)
+              setData(result)  
+              setIsLoaded(true)
+          },
+          (error) => {
+            setIsLoaded(true)
+            setData(error)
+          }
+          );
+    }, []);
+    try {
+      return(
         <>
             <PageHeader 
-                title={"Ihre Ergebnisse zur Übung mit der Name "+ name}
+                title={"Ihre Ergebnisse zur Übung mit der Name "+ data.topic}
                 subtitle="Ihre Ergebnisse"
                 icon={<PostAddIcon fontSize="large"/>}
             />
-            <Paper className={classes.pageContent}>
-            <Card className={classes.root}>
-                <CardHeader title="Feedback zu Schreibfähigkeiten und mehr mit Hilfe von Text-Indizes von Readerbench" />
-                <CardContent>
-                <div>
-                    {name ? (
-                        <div>
-                        The <code>name</code> in the query string is &quot;{name}
-                        &quot;
-                        </div>
-                    ) : (
-                        <h3>There is no name in the query string</h3>
-                    )}
-                </div>
-                </CardContent>
-            </Card>
+              {data.data.map((index)=>{
+                return(
+                      <Question question={index}/>
+                )
+              })} 
             
-            </Paper>
-            <Paper className={classes.pageContent}>
-            <Card className={classes.root}>
-                <CardHeader title="Vergleich mit der Korrektur unter Verwendung von CNA(Cohesion Network Graph)" />
-                <CardContent>
-                <div>
-                    {name ? (
-                        <div>
-                        The <code>name</code> in the query string is &quot;{name}
-                        &quot;
-                        </div>
-                    ) : (
-                        <h3>There is no name in the query string</h3>
-                    )}
-                </div>
-                </CardContent>
-            </Card>
-            
-            </Paper>
-            <Paper className={classes.pageContent}>
-            <Card className={classes.root}>
-                <CardHeader title="Vergleich der Schlüsselwörter" />  
-                <CardContent>
-                <div>
-                    {name ? (
-                        <div>
-                        The <code>name</code> in the query string is &quot;{name}
-                        &quot;
-                        </div>
-                    ) : (
-                        <h3>There is no name in the query string</h3>
-                    )}
-                </div>
-                </CardContent>
-            </Card>
-            
-            </Paper>
             
         </>
         
     )
+      
+    } catch (error) {
+      return(
+        <>
+           <div ><Box
+                  p={2}
+                  position="absolute"
+                  top={400}
+                  left="50%"
+                  zIndex="tooltip"
+                >
+                <CircularProgress />
+                  Loading Page
+                </Box>
+            </div>
+               
+        </>
+        
+    )
+      
+    }
+    
 }

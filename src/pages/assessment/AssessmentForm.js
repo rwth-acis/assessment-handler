@@ -189,7 +189,7 @@ export default function AssessmentForm(props){
                             variant="contained"
                             // disabled={!isValid || values.people.length === 0}
                             >
-                            Frage senden
+                            Übung senden
                         </Button>
                         <Divider style={{ marginTop: 20, marginBottom: 20 }} />
                         {debug && (

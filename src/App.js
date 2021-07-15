@@ -131,7 +131,7 @@ function App() {
               </Route>
             </Switch>
           </div>
-        </Router>;
+        </Router>
 
         
         
@@ -156,25 +156,13 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-function ReportF() {
+function ReportF({ name }) {
   let query = useQuery();
-  return (<Report name={query.get("topic")} />);
+  console.log(query.get("fileName"))
+  return (<Report name={query.get("fileName")} />);
 }
 
-function Child({ name }) {
-  return (
-    <div>
-      {name ? (
-        <div>
-          The <code>name</code> in the query string is &quot;{name}
-          &quot;
-        </div>
-      ) : (
-        <h3>There is no name in the query string</h3>
-      )}
-    </div>
-  );
-}
+
 
 
 export default App;
